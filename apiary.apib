@@ -1,0 +1,265 @@
+FORMAT: 1A
+HOST: https://rates.goeasyship.com/v1
+
+# Easyship API
+
+This documentation details the usage of the Easyship APIs, for Tracking and Rates.
+
+## Generate the Access Token
+
+### Step 1. Get API Key and Secret
+
+Store the `API Key` and `API Secret` provided by your Easyship local technical team.
+
+
+    Example:
+    YOUR_KEY: "669a749cd20f0c86feb6d8d61c571e7d0253885618a997918683b0f4233cf902"
+
+    YOUR_SECRET: "-----BEGIN RSA PRIVATE KEY-----\nMIIEpgIBAAKCAQEA5EY1GcxGL3Bf8ZagMS35zUnFDNzzwwR36q1HmL49lDmuWKoU\nqYKqRuDQJoAfOWvb2yoFcyMa1g8GM+0dsuaWu+0nkeHby8welHy5bqf4Gfk435aO\nVZRlRI8X7Xy3USB8VTaoPqS1+57s5L3g+A82SaHQua6zifiUAHFsQq2RgKm6R4If\nZvkRtciE4LQT13fZabpwQIXItEZ/2PNl4VPG6rMEIt3JHRllDWjaoyHwYN2SbwuR\n+Duqp9sBFAbhP7apoSKgqhM4CkTGuEArj1Czv6QR94XECn4gAbjOYGrwU5OESTzS\nf71QbQtardlh0Vafh6649hJaByo5WJD2vQRyHwIDAQABAoIBAQCQjNS7TVt0Vtiq\nhxNRkSeKE5iwGIpTh9TXynp4Ap/D6PK6Oply7ccdsuacOq2LEv3ZvrZMvoIT4teu\nsgwIaXQx9G8GNduVJeCHbqONqte0utiE3TWsg5fM3j/spvj+am/RFhdb87k5aN3h\ny0tWSWu7HLirnDEcwUgXL7u6TWbB7YZXpoJivjHaWBuvgUF07eRPWimE59tVRVDU\nkPLOLdXuVF0blYteUuhdZlNGsanZQTEKHVpo9uRUzdfwLNxCiKDAkoL2obOVP+o+\n3jUHyoKpkXtY9ZeKZ5MJOZHcA+RQEcuvLSJryOm+whYM1gqQrBlEpBdmwsTwID24\nO4oS6BEBAoGBAPQjuVLAaZMtwX8ZxSraN8wc9X1vboqTQVXgui7U22iNN7gmZdRf\nnPQ6tENUxPrvhUWb1sEQ0XSw6jbiBP9qYsuLggDD9k0xyShWRi7CcicU+DwhLMZQ\n2c7BWXCCeN6VnByY+hvF5fDiBLQzF1R0+JMucqq7Ptz9SCGaCGj6g/8hAoGBAO9d\nLCbg1q1V/+2sGyVa0hgGlEjc+brzimtFnfc4fGPRN2uR9Mqx/5H1lDBhs8kiOBXg\n9cTZMbjwlfUqjPiDWk/gdT/VTi3YCrXbGhCzTyZQx8k89sIPz7YXjozjHdDGGJgR\n0b4+/XYlqdGxCrK9E2Uyleuq6O6/Fj5hxgETAIk/AoGBANxzbaKlkC+QP4svj/Rz\n+7JZ6+qKNnz3HyYWuMgU+NJdwhSMx6KPe8ClSaUK5JvasLL8V10afKgsIDHSwcSJ\nIhC+NnPOf5eQ/x1nWhRbDIzxyH0zT6T72NFzkfmgNth2q/K+yAlQF6P901WMVOK0\nhMkSRgSY89jE9N8yoal5nLtBAoGBAKJ8VSRvLEuuPXVRh3vsEwJMNQzhNIU8HZKE\nR58ysP3xX/WdttaBzkN+uYG+URUQLZJsi2l9JsusRZ+PqvJn+D6Q2Abk/ZUROvQI\nL8F2dxxDadupjrhdk1rA0vvAkNTQJJHWRtMmX1h8aLL3w5Nh1nCzziGUe1rWTHs8\nU/UWuR5xAoGBAJ/QYhleOhXWRWnZQiIPWvcwupfYTwC+ScbmM4mAGQwU53TppT6j\nz15bNWCAb4rt9QFBWGYow71DCtDZzIq9NF9Q4m9hl2sH74k17+KAU12B2YwF4Pu1\nEs5RXW7o9Uo+pA2/f3boRmwxc08kGAUJ+8ZU9og0PwTniytsXQfo0NaU\n-----END RSA PRIVATE KEY-----\n"
+
+
+### Step2. Get the access token using JWT
+
+Flow show as picture.
+
+![rate auth](https://cloud.githubusercontent.com/assets/7286592/19299196/7e90438c-9085-11e6-8db6-d265f701120a.png)
+
+A JWT is composed as follows:
+
+```
+{Base64url encoded header}.{Base64url encoded claim set}.{Base64url encoded signature}
+```
+
+### Step 2.1 Forming the JWT header
+
+Header is always as below: 
+
+```
+{"alg":"RS256","typ":"JWT"}
+```
+
+The Base64url representation of this is as follows:
+
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9
+```
+
+### Step 2.2 Forming the JWT claim set
+
+|Name   | Description |
+|------|-------------------------|
+|iss    | YOUR_KEY (provided by Easyship) |
+|scope  | A space-delimited list of the permissions that the application requests. Valid permission: `get_rate` and `get_all_rate` |
+|aud    | A descriptor of the intended target of the assertion. When making an access token request this value is always `https://rates.goeasyship.com/oauth2/token` |
+|exp    | The expiration time of the assertion, specified as seconds since 00:00:00 UTC, January 1, 1970. This value has a maximum of 1 hour after the issued time. |
+|iat    | The time the assertion was issued, specified as seconds since 00:00:00 UTC, January 1, 1970.|
+
+
+```
+jwt_claim_set = {
+  "iss":"669a749cd20f0c86feb6d8d61c571e7d0253885618a997918683b0f4233cf902",
+  "scope":"get_rate get_all_rate",
+  "aud":"https://rates.goeasyship.com/oauth2/token",
+  "exp":1475752359,
+  "iat":1475749359
+}
+```
+
+The Base64url representation of this is as follows:
+
+```
+eyJpc3MiOiI2NjlhNzQ5Y2QyMGYwYzg2ZmViNmQ4ZDYxYzU3MWU3ZDAyNTM4ODU2MThhOTk3OTE4NjgzYjBmNDIzM2NmOTAyIiwic2NvcGUiOiJnZXRfcmF0ZSBnZXRfYWxsX3JhdGUiLCJhdWQiOiJodHRwczovL3JhdGVzLmdvZWFzeXNoaXAuY29tL29hdXRoMi90b2tlbiIsImV4cCI6MTQ3NTc1MjM1OSwiaWF0IjoxNDc1NzQ5MzU5fQ
+```
+
+### Step 2.3 Forming the Signature
+The base data string for the signature is as follows:
+
+```
+{Base64url encoded header}.{Base64url encoded claim set}
+```
+
+so `data_string` will be 
+
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiI2NjlhNzQ5Y2QyMGYwYzg2ZmViNmQ4ZDYxYzU3MWU3ZDAyNTM4ODU2MThhOTk3OTE4NjgzYjBmNDIzM2NmOTAyIiwic2NvcGUiOiJnZXRfcmF0ZSBnZXRfYWxsX3JhdGUiLCJhdWQiOiJodHRwczovL3JhdGVzLmdvZWFzeXNoaXAuY29tL29hdXRoMi90b2tlbiIsImV4cCI6MTQ3NTc1MjM1OSwiaWF0IjoxNDc1NzQ5MzU5fQ
+```
+
+Sign the UTF-8 representation of the input using SHA256withRSA (also known as RSASSA-PKCS1-V1_5-SIGN with the SHA-256 hash function) with the private key obtained from the EasyshipRate.
+
+In `Ruby`, we did like this:
+
+```
+OpenSSL::PKey::RSA.new(YOUR_SECRET).sign(OpenSSL::Digest.new('sha256'), data_string)
+```
+
+The Base64url representation of this is as follows:
+
+```
+auAsUl84VsVrsEi5ABC5-gowdPGr4LCOhfHY8AKOG9lKCg5X9zjWxw96jEOP1_Ky53PpqTmFmPZxJdY9QeBxMGhxLJS_hR4he4OlYnoJoCkufjz3bfPqjSz-m7xmgtc23RVl9lj_hIT7vnZyJfX_24pSWok4RphlqFTQN3XbAcSKVE3TMJJ1WmUehaLI-yxJlirM32hJ5g9MruaxOkoyk_O7TMAye3bj6i20NOZgcO4oJWMvkhOB-mORlPqP0_chAm12V_ZHAPC9wxPIv_7kPKaLpNOuMr28ctxk4FdlRuGtIhTAcjBzY8mrgn9JTJyGDx-xf6d-g2MGAe62PRBg1w
+```
+
+### Step 2.4 Now, you have a JWT
+
+A JWT is composed as follows:
+
+```
+YOUR_JWT = {Base64url encoded header}.{Base64url encoded claim set}.{Base64url encoded signature}
+```
+
+And this is your JWT
+
+```
+eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiI2NjlhNzQ5Y2QyMGYwYzg2ZmViNmQ4ZDYxYzU3MWU3ZDAyNTM4ODU2MThhOTk3OTE4NjgzYjBmNDIzM2NmOTAyIiwic2NvcGUiOiJnZXRfcmF0ZSBnZXRfYWxsX3JhdGUiLCJhdWQiOiJodHRwczovL3JhdGVzLmdvZWFzeXNoaXAuY29tL29hdXRoMi90b2tlbiIsImV4cCI6MTQ3NTc1MjM1OSwiaWF0IjoxNDc1NzQ5MzU5fQ.auAsUl84VsVrsEi5ABC5-gowdPGr4LCOhfHY8AKOG9lKCg5X9zjWxw96jEOP1_Ky53PpqTmFmPZxJdY9QeBxMGhxLJS_hR4he4OlYnoJoCkufjz3bfPqjSz-m7xmgtc23RVl9lj_hIT7vnZyJfX_24pSWok4RphlqFTQN3XbAcSKVE3TMJJ1WmUehaLI-yxJlirM32hJ5g9MruaxOkoyk_O7TMAye3bj6i20NOZgcO4oJWMvkhOB-mORlPqP0_chAm12V_ZHAPC9wxPIv_7kPKaLpNOuMr28ctxk4FdlRuGtIhTAcjBzY8mrgn9JTJyGDx-xf6d-g2MGAe62PRBg1w
+```
+
+### Step 2.5 Get the Access Token
+
+Now you're going to `POST` to `https://rates.goeasyship.com/oauth2/token` and get access token, using the JWT generated above. 
+
+```
+POST https://rates.goeasyship.com/oauth2/token
+{
+  "grant_type": "assertion",
+  "assertion": "YOUR_JWT",
+  "assertion_type": "urn:ietf:params:oauth:grant-type:jwt-bearer"
+}
+```
+
+![Easyship Rate API authentication - post](https://dl.dropboxusercontent.com/u/22307926/Easyship%20Rate%20API%20authentication%20-%20post.png)
+
+
+## JWT Libraries
+
+**[Important]** There are lots of libraries helping you generate JWT easily. You can find a comprehensive list on [https://jwt.io/](https://jwt.io/)
+
+For example: 
+
+### Generate JWT using Node.js
+
+```
+var jwt = require('jwt-simple');
+function generateAssertion() {
+  var now     = Date.now();
+  var jwt_claim_set = {
+    iss: YOUR_KEY,
+    scope: 'get_rate get_all_rate',
+    aud: 'https://rates.goeasyship.com/oauth2/token',
+    exp: now + 120,
+    iat: now
+  };
+  return jwt.encode(jwt_claim_set, YOUR_SECRET, 'RS256');
+};
+```
+
+
+## Rates [/get_rates?access_token={access_token}&origin_country_alpha2={origin_country_alpha2}&origin_postal_code={origin_postal_code}&destination_country_alpha2={destination_country_alpha2}&destination_postal_code={destination_postal_code}&total_actual_weight={total_actual_weight}&height={height}&width={width}&length={length}&document={document}]
+
+### Get Rates [GET]
+
+<!--`GET https://rates.goeasyship.com/v1/get_rates`-->
+The JWT access token generated above should added in the Headers 
+```
+Authentication: Bearer 75ff680bc6eb39eb5aa5fd503d96ffbc045467ffb6ee0df96f4d43be8eab9118 
+```
+
+
++ Request
+    + Headers
+
+            Authentication: Bearer JWT (required, Access Token generated above)
+
++ Parameters
+    + origin_country_alpha2: SG (string, required) - Origin Country Alpha2 [(see list)](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+    + origin_postal_code: WC2N (string, required) - Destination postal code
+    + destination_country_alpha2: US (string, required) - Destination Country Alpha2 [(see list)](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+    + destination_postal_code: 10030 (string, required) - Destination postal code
+    + total_actual_weight: 0.6 (number, required) - Total weight of the shipment in kg
+    + height: 10 (number, required)-  Total height of the shipment in cm
+    + width: 10 (number, required)-  Total width of the shipment in cm
+    + length: 10 (number, required)-  Total length of the shipment in cm
+    + document: true (boolean) - Filter Document couriers vs. Parcel couriers (default: `false`)
+
+
++ Response 200 (application/json)
+
+        {
+            "rates": [
+                {
+                    courier_logo: "dhl",
+                    courier_name: "DHL Express",
+                    max_delivery_time: 4,
+                    min_delivery_time: 1,
+                    shipment_charge_total: "172.26",
+                    currency: "HKD"
+                },
+            ]
+        }
+
+
+## Extended Rates [/get_all_rates]
+
+Requires premium account
+
+### Get Extended Rates [POST]
+
+<!--`POST https://rates.goeasyship.com/v1/get_all_rates`-->
+The JWT access token generated above should added in the Headers 
+```
+Authentication: Bearer 75ff680bc6eb39eb5aa5fd503d96ffbc045467ffb6ee0df96f4d43be8eab9118 
+```
+
++ Request (application/json)
+    + Headers
+    
+            Authentication: Bearer 75ff680bc6eb39eb5aa5fd503d96ffbc045467ffb6ee0df96f4d43be8eab9118 
+
+    + Attributes
+        + origin_country_alpha2: SG (string, required) - Origin Country Alpha2 [(see list)](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+        + origin_postal_code: WC2N (string, required) - Origin postal code
+        + destination_country_alpha2: US (string, required) - Destination Country Alpha2 [(see list)](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2)
+        + destination_postal_code: 10030 (string, required) - Destination postal code
+        + taxes_duties_paid_by: Sender (string) - Taxes & Duties paid by. Allowed values: `"Sender", "Receiver"`. Default: `"Sender"`
+        + is_insured: false (boolean) - Shipment includes insurance fee. Default: `"false"`
+        + items (required, array) - All shipment items, see below:
+            + (object)
+                + actual_weight: 1.2 (number, required) - Item's actual weight in kg
+                + height: 10 (number, required)-  Item's  height in cm
+                + width: 15 (number, required)-  Item's  width in cm
+                + length: 20 (number, required)-  Item's length in cm
+                + category: mobiles (string, required) - Item's category, allowed values: `"mobiles", "tablets", "computers_laptops", "cameras", "accessory_no_battery", "accessory_battery", "health_beauty", "fashion", "watches", "home_appliances", "home_garden", "toys", "sport", "luggage", "audio_video", "documents"`
+                + declared_currency: SGD (required, string) - Item's customs value currency
+                + declared_customs_value: 100 (number, required) - Item's customs value
+
++ Response 200 (application/json)
+
+        {
+            "rates": [
+                {
+                    "courier_id": "d6b5c2cf-d8e9-41ea-9356-43002b0beb7c",
+                    "courier_name": "TNT",
+                    "courier_logo": "tnt",
+                    "min_delivery_time": 1,
+                    "max_delivery_time": 3,
+                    "tracking_rating": 3,
+                    "easyship_rating": 3,
+                    "currency": "HKD",
+                    "shipment_charge": 120.4,
+                    "fuel_surcharge": 15.652,
+                    "shipment_charge_total": 136.052,
+                    "insurance_fee": 0,
+                    "ddp_handling_fee": 0,
+                    "import_tax_charge": 0,
+                    "import_duty_charge": 0,
+                    "total_charge": 136.05,
+                    "is_above_threshold": false,
+                    "effective_incoterms": "DDU",
+                    "estimated_import_tax": 0,
+                    "estimated_import_duty": 0,
+                    "courier_does_pickup": true,
+                    "courier_dropoff_url": "",
+                    "value_for_money_rank": 1,
+                    "delivery_time_rank": 1,
+                    "payment_recipient": "Easyship"
+                }
+            ]
+        }
